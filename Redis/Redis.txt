@@ -1,0 +1,121 @@
+Redis 
+http://redis.io/
+
+概述:
+Redis是一个开源的高性能键值对数据库。它通过提供多种键值数据类型来适应不同场景
+下的存储需求，并借助许多高层级的接口使其可以胜任如缓存、队列系统等不同的角色。
+它使用内存提供主存储支持，而仅使用硬盘做持久性的存储。
+
+持久化:
+Redis的强劲性能很大程度上是由于其将所有数据都存储在了内存中，为了使Redis在重
+启之后仍能保证数据不丢失，需要将数据从内存中以某种形式同步到硬盘中，这一过程
+就是持久化。Redis支持两种方式的持久化，一种是RDB方式，一种是AOF方式。可以单
+独使用其中一种或将二者结合使用。RDB是Redis默认采用的持久化方式。
+
+主从复制(master-slave):
+主数据库(master)可以进行读写操作，当发生写操作时自动将数据同步给从数据库(slave)。
+而从数据库一般是只读的，并接受主数据库同步过来的数据。一个主数据库可以拥有多个从
+数据库，而一个从数据库只能拥有一个主数据库。
+
+----------------------------------------------------------------------
+Windows下使用:
+
+--启动服务端
+D:\Java\redis-2.8.19>redis-server.exe redis.windows.conf
+
+--启动客户端
+D:\Java\redis-2.8.19>redis-cli.exe -h 192.168.1.80 -p 6379
+
+--查看所有key
+localhost:6379> keys *
+
+----------------------------------------------------------------------
+Linux下使用:
+
+--安装
+$ wget http://download.redis.io/releases/redis-3.0.2.tar.gz
+$ tar xzf redis-3.0.2.tar.gz
+$ cd redis-3.0.2
+$ make
+
+--启动服务端(redis服务默认使用6379端口号)
+./src/redis-server
+./src/redis-server &
+(以上几种方式都没有指定配置文件，仅在测试时使用)
+
+--指定配置启动服务(推荐使用)
+./src/redis-server --port 6380
+./src/redis-server redis.conf  
+
+--启动客户端
+src/redis-cli
+src/redis-cli -p 6380
+src/redis-cli -h 127.0.0.1 -p 6379
+
+--测试连接
+127.0.0.1:6379> ping
+
+--停止服务
+127.0.0.1:6379> shutdown
+
+--性能测试工具
+src/redis-benchmark
+
+--添加开机启动
+1.修改redis根目录名称，便于区分
+mv redis-3.0.2  redis-6379
+2.修改redis.conf中的部分配置
+daemonize   yes   (使redis以守护进程模式运行，必须修改)
+pidfile     /var/run/redis_6379.pid  (设置redis的PID文件位置，必须修改)
+port        6379  (设置redis监听的端口好，必须修改)
+dir         /var/redis/6379  (设置持久化文件存放位置，建议修改)
+3.修改 /etc/rc.d/rc.local 文件，添加一行，内容如下
+/usr/local/redis-6379/src/redis-server /usr/local/redis-6379/redis.conf
+
+--主从复制
+第一种:
+1.启动master
+redis-server
+2.启动slave
+redis-server --port 6380 --slaveof 127.0.0.1 6379
+第二种(推荐使用):
+在从数据库的配置文件中加入"slaveof masterip masterport"即可，
+主数据库无需进行任何配置。
+
+--集群
+1.创建集群及节点目录
+mkdir redis-cluster
+cd redis-cluster
+mkdir 7001 7002 7003 7004 7005 7006
+2.在每个节点中创建redis.conf，内容如下(注意端口号)
+daemonize yes
+port 7001
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+3.复制可执行程序redis-server至每个redis节点目录下，并开启每个节点
+cp redis-6379/src/redis-server redis-cluster/7001/
+cd 7001
+redis-server redis.conf
+....
+4.安装redis-trib.rb程序需要的支持
+yum -y install ruby rubygems
+gem install redis
+5.创建集群
+./redis-trib.rb create --replicas 1 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006
+6.连接集群
+redis-cli -c -p 7001
+7.添加新节点
+./redis-trib.rb add-node 127.0.0.1:7007 127.0.0.1:7001
+8.移除一个节点
+./redis-trib del-node 127.0.0.1:7000 'node-id'
+
+--查看集群信息
+cluster info
+--查看集群节点
+cluster nodes
+
+----------------------------------------------------------------------
+Java操作redis - Jedis:
+https://github.com/xetorthio/jedis
