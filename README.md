@@ -1,2 +1,2 @@
-# NoSQL 非关系型的数据库
+# NoSQL 非关系型数据库
 Redis、MongoDB、MemCache
