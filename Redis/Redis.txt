@@ -1,5 +1,6 @@
-Redis 
-http://redis.io/
+Redis  http://redis.io/ 
+
+Jedis(Java操作redis): https://github.com/xetorthio/jedis
 
 概述:
 Redis是一个开源的高性能键值对数据库。它通过提供多种键值数据类型来适应不同场景
@@ -84,40 +85,3 @@ redis-server --port 6380 --slaveof 127.0.0.1 6379
 在从数据库的配置文件中加入"slaveof masterip masterport"即可，
 主数据库无需进行任何配置。
 
---集群
-1.创建集群及节点目录
-mkdir redis-cluster
-cd redis-cluster
-mkdir 7001 7002 7003 7004 7005 7006
-2.在每个节点中创建redis.conf，内容如下(注意端口号)
-daemonize yes
-port 7001
-cluster-enabled yes
-cluster-config-file nodes.conf
-cluster-node-timeout 5000
-appendonly yes
-3.复制可执行程序redis-server至每个redis节点目录下，并开启每个节点
-cp redis-6379/src/redis-server redis-cluster/7001/
-cd 7001
-redis-server redis.conf
-....
-4.安装redis-trib.rb程序需要的支持
-yum -y install ruby rubygems
-gem install redis
-5.创建集群
-./redis-trib.rb create --replicas 1 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006
-6.连接集群
-redis-cli -c -p 7001
-7.添加新节点
-./redis-trib.rb add-node 127.0.0.1:7007 127.0.0.1:7001
-8.移除一个节点
-./redis-trib del-node 127.0.0.1:7000 'node-id'
-
---查看集群信息
-cluster info
---查看集群节点
-cluster nodes
-
-----------------------------------------------------------------------
-Java操作redis - Jedis:
-https://github.com/xetorthio/jedis
