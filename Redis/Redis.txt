@@ -33,6 +33,7 @@ D:\Java\redis-2.8.19>redis-server.exe redis.windows.conf
 
 --启动客户端
 D:\Java\redis-2.8.19>redis-cli.exe -h 192.168.1.80 -p 6379
+D:\Java\redis-2.8.19>redis-cli.exe -h 112.124.26.177 -p 6379 -a ustone123456  //a: auth 密码
 
 --查看所有key
 localhost:6379> keys *
