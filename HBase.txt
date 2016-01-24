@@ -1,0 +1,8 @@
+
+
+HBase是一个分布式的、面向列的开源数据库，一个结构化数据的分布式存储系统。HBase在Hadoop之上提供了
+类似于Bigtable的能力。HBase是Apache的Hadoop项目的子项目。HBase不同于一般的关系数据库，它是一个
+适合于非结构化数据存储的数据库。另一个不同的是HBase基于列的而不是基于行的模式。
+
+HBase – Hadoop Database，是一个高可靠性、高性能、面向列、可伸缩的分布式存储系统，利用HBase技
+术可在廉价PC Server上搭建起大规模结构化存储集群。
