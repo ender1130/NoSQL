@@ -26,76 +26,15 @@ d.支持同步并且高可用。
 e.文件存储格式为BSON（一种JSON的扩展）。
 
 存储在集合中的文档，被存储为键-值对的形式。键用于唯一标识一个文档，为字符串类型，而值则可以是各种复杂的文件类型。
-我们称这种存储形式为BSON（Binary Serialized Document Format）。 
-
------------------------------------------------------------------------------
-
-安装、运行
-
-第一种方式:
-1.将 mongodb-win32-i386-2.0.4.zip 解压到 C:\mongodb下，
-新建data文件夹，并且在data文件夹下新建db文件夹。
-
-2.
-运行服务端:
-打开cmd，进入mongodb\bin目录下
-运行 C:\mongodb\bin>mongod --dbpath=c:\mongodb\data\db --directoryperdb 
-		    --logpath=c:\mongodb\data\mongodb.log -logappend
-
-注:
-数据目录为 C:\mongodb\data\db，并且每个数据库将储存在一个单独的目录(--directoryperdb)。
-日志文件为 C:\mongodb\data\mongodb.log，以追加的添加方式记录(-logappend)，
-mongodb.log是运行命令后自动生成的日志文件。
-
-服务端要一直运行。
-
-3.
-运行客户端:
-新打开一个cmd
-运行 C:\mongodb\bin>mongo
-或 C:\mongodb\bin>mongo localhost:27017
-或 C:\mongodb\bin>mongo --host localhost --port 27017
-
-
-第二种方式:(将MongoDB安装成服务)
---查看mongod命令的参数
-C:\mongodb\bin>mongod -h
-
---安装服务
-C:\mongodb\bin>mongod --dbpath c:\mongodb\data\db --directoryperdb 
-               --logpath c:\mongodb\data\mongdb.log --logappend 
-	       [--serviceName MongoDB] 
-	       [--bind_ip 127.0.0.1] 
-               [--port 27017] 
-	       --install
-注:默认端口号为27017
-
---删除服务
-C:\mongodb\bin>mongod --remove
-
---启动服务
-C:\mongodb\bin>net start mongodb
-
---停止服务
-C:\mongodb\bin>net stop mongodb
-
---查看mongo命令参数
-C:\mongodb\bin>mongo -h
-
---运行mongodb
-C:\mongodb\bin>mongo [--host localhost] [--port 1234]
-或
-C:\mongodb\bin>mongo --host localhost --port 27017
-或
-C:\mongodb\bin>mongo localhost:27017
+我们称这种存储形式为BSON（Binary Serialized Document Format）。
 
 -----------------------------------------------------------------------------
 
 --显示所有数据库
-show dbs; 
+show dbs;
 
 --列出当前数据库的所有文档
-show collections; 
+show collections;
 
 --查看各collection的状态
 db.printCollectionStats();
@@ -111,7 +50,7 @@ show users;
 db.addUser("bsoft","bsoft");
 
 注:
-db.addUser("username", "password"); --普通权限，可读写			
+db.addUser("username", "password"); --普通权限，可读写
 db.addUser("username", "password", true); --只可读，不可写
 
 --删除用户
@@ -119,7 +58,7 @@ db.system.users.remove({user:"aaa"});
 或 db.removeUser('aaa');
 
 --使用数据库cdr
-use cdr; 
+use cdr;
 (注:即使这个数据库不存在也可以执行，但该数据库不会立刻被新建，
 要等到执行了insert之类的操作时，才会建立这个数据库)
 
@@ -194,7 +133,7 @@ $not: 反匹配(1.3.3及以上版本) 
 --查找并排序(name升序,age降序)
 > db.coll_1.find({sex:'man'}).limit(1);
 
---查询名字不等于 'lili' 的学生信息 
+--查询名字不等于 'lili' 的学生信息
 > db.coll_1.find({name:{$ne:'lili'}});
 
 --查询 birthday > '1990-12-17' and birthday <= '1990-12-19' 的学生 
@@ -271,15 +210,13 @@ for( var c = db.coll_1.find(); c.hasNext(); ) {
 --备份
 C:\mongodb\bin>mongodump --help
 
-
 --恢复
 C:\mongodb\bin>mongorestore --help
 
-
 --导出
-C:\mongodb\bin>mongoexport --help  
+C:\mongodb\bin>mongoexport --help
 
-C:\mongodb\bin>mongoexport -d cdr -c t_test1 -o c:\t_test1.json 
+C:\mongodb\bin>mongoexport -d cdr -c t_test1 -o c:\t_test1.json
 
 --导入
 C:\mongodb\bin>mongoimport --help
