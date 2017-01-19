@@ -1,0 +1,65 @@
+
+
+1.创建数据目录
+mkdir /data/mongo
+
+2.创建配置文件
+vi /data/mongo/mongodb.cnf
+
+dbpath=/data/mongo/
+logpath=/data/mongo/mongo.log
+logappend=true
+fork=true
+port=27017
+(或者:不创建配置文件通过mongod参数启动也可以)
+
+3.启动
+a.配置文件方式启动mongo
+bin/mongod -f /data/mongo/mongodb.cnf
+或者 # bin/mongod -f /data/mongo/mongodb.cnf & （放到后台执行）
+
+b.参数启动mongo
+bin/mongod -dbpath /data/mongo/ -logpath /data/mongo/mongo.log -logappend -fork -port 27017
+
+终端输入出:
+all output going to: /data/mongo/mongo.log
+
+
+4.成功后即可以登录mongo
+bin/mongo
+
+终端输入出:
+MongoDB shell version: 2.2.3
+connecting to: test
+>
+
+现在mongo就可以正常使用了.
+
+-----------------------------------------------------------------------------------------------------
+随系统启动
+
+在/etc/rc.local添加如下即可：
+
+rm /data/mongo/mongod.lock #停止可能在运行的mongo
+/.../bin/mongod -f /data/mongo/mongodb.cnf
+或者 /.../bin/mongod -dbpath /data/mongo/ -logpath /data/mongo/mongo.log -logappend -fork -port 27017
+
+-----------------------------------------------------------------------------------------------------
+异常:
+
+1.出现启动报错 ERROR: child process failed, exited with error number 100
+解决方法:
+  一般是由于上一次mongodb没有正常关闭，只需要 rm /data/mongo/mongod.lock, 重启就好。
+
+2.日志中出现 exception in initAndListen: 12596 old lock file, terminating
+解决方法:
+  a.删除data目录中的.lock文件
+  b.修复mongo: ./mongod -f ./mongod.conf --repair
+  c.重启
+
+3.日志出现 exception in initAndListen: 15923 couldn't get file length when opening mapping /home/mongodb/db/lianlian_data_log.3 boost::filesystem::file_size: No such file or directory: "/home/mongodb/db/lianlian_data_log.3", terminating
+  或  exception in initAndListen: 13597 can't start without --journal enabled when journal/ files are present, terminating
+解决方法:
+  一般是由于误删了数据文件，导致mongo在启动时缺少数据文件无法启动。
+  删除 /data/mongo/mongod.lock，并且清空 /home/mongodb/db/journal 目录，重新启动即可解决。
+
