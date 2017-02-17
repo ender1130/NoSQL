@@ -1,0 +1,66 @@
+
+Windows下使用:
+
+--启动服务端
+D:\Java\redis-2.8.19>redis-server.exe redis.windows.conf
+
+--启动客户端
+D:\Java\redis-2.8.19>redis-cli.exe -h 192.168.1.80 -p 6379
+D:\Java\redis-2.8.19>redis-cli.exe -h 112.124.26.177 -p 6379 -a ustone123456  //a(auth):密码
+
+--查看所有key
+localhost:6379> keys *
+
+----------------------------------------------------------------------------------------------------
+
+Linux下使用:
+
+--安装
+$ wget http://download.redis.io/releases/redis-3.0.2.tar.gz
+$ tar xzf redis-3.0.2.tar.gz
+$ cd redis-3.0.2
+$ make
+
+--启动服务端(redis服务默认使用6379端口号)
+./src/redis-server
+./src/redis-server &
+(以上几种方式都没有指定配置文件，仅在测试时使用)
+
+--指定配置启动服务(推荐使用)
+./src/redis-server --port 6380
+./src/redis-server redis.conf
+
+--启动客户端
+src/redis-cli
+src/redis-cli -p 6380
+src/redis-cli -h 127.0.0.1 -p 6379
+
+--测试连接
+127.0.0.1:6379> ping
+
+--停止服务
+127.0.0.1:6379> shutdown
+
+--性能测试工具
+src/redis-benchmark
+
+--添加开机启动
+1.修改redis根目录名称，便于区分
+mv redis-3.0.2  redis-6379
+2.修改redis.conf中的部分配置
+daemonize   yes   (使redis以守护进程模式运行，必须修改)
+pidfile     /var/run/redis_6379.pid  (设置redis的PID文件位置，必须修改)
+port        6379  (设置redis监听的端口好，必须修改)
+dir         /var/redis/6379  (设置持久化文件存放位置，建议修改)
+3.修改 /etc/rc.d/rc.local 文件，添加一行，内容如下
+/usr/local/redis-6379/src/redis-server /usr/local/redis-6379/redis.conf
+
+--主从复制
+第一种:
+1.启动master
+redis-server
+2.启动slave
+redis-server --port 6380 --slaveof 127.0.0.1 6379
+第二种(推荐使用):
+在从数据库的配置文件中加入"slaveof masterip masterport"即可，
+主数据库无需进行任何配置。
