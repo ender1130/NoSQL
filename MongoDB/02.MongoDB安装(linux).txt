@@ -27,6 +27,7 @@ all output going to: /data/mongo/mongo.log
 
 4.成功后即可以登录mongo
 bin/mongo
+bin/mongo 172.25.29.87:8301
 
 终端输入出:
 MongoDB shell version: 2.2.3
