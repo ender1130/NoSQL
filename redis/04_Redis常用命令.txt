@@ -1,0 +1,256 @@
+
+Redis常用命令
+
+常用配置项: host、port、password 等。
+
+----------------------------------------------------------------------------
+0.公共
+
+--启动客户端
+redis-cli.exe -h 192.168.1.80 -p 6379
+或 redis-cli.exe -h 112.124.26.177 -p 6379 -a ustone123456 （a代表密码）
+
+--删除
+DEL key
+DEL key1 key2
+
+--检查给定key是否存在
+EXISTS key
+
+--为给定key设置生存时间
+EXPIRE key seconds （seconds代表秒）
+
+--为key设置生存时间
+EXPIREAT key timestamp
+
+--查找所有符合给定模式pattern的key
+KEYS *
+KEYS h?llo
+KEYS h*llo
+
+--以秒为单位，返回给定key 的剩余生存时间
+TTL key
+
+--以毫秒为单位返回key 的剩余生存时间
+PTTL key
+
+--返回key 所储存的值的类型
+TYPE key
+
+--删除当前数据库所有key
+FLUSHDB
+
+--清空整个Redis 服务器的数据(删除所有数据库的所有key)
+FLUSHALL
+
+--返回当前数据库的key 的数量
+DBSIZE
+
+--关于Redis 服务器的各种信息和统计数值
+INFO
+
+--返回当前服务器时间
+TIME
+
+--关闭redis 服务器
+SHUTDOWN
+
+----------------------------------------------------------------------------
+1.string
+
+--返回key 所关联的字符串值
+GET key
+
+--将key 中储存的数字值减一
+DECR key
+
+--将key 所储存的值减去减量decrement
+DECRBY key decrement
+
+--将key 中储存的数字值增一
+INCR key
+
+--将key 所储存的值加上增量increment
+INCRBY key increment
+
+--返回所有(一个或多个) 给定key 的值
+MGET key [key ...]
+
+--将字符串值value 关联到key
+SET key value [EX seconds] [PX milliseconds] [NX|XX]
+• EX second ：设置键的过期时间为second 秒。SET key value EX second 效果等同于SETEX key
+second value 。
+• PX millisecond ：设置键的过期时间为millisecond 毫秒。SET key value PX millisecond 效果
+等同于PSETEX key millisecond value 。
+• NX ：只在键不存在时，才对键进行设置操作。SET key value NX 效果等同于SETNX key value 。
+• XX ：只在键已经存在时，才对键进行设置操作。
+
+--同时设置一个或多个key-value 对
+MSET key value [key value ...]
+
+--同时设置一个或多个key-value 对，当且仅当所有给定key 都不存在
+MSETNX key value [key value ...]
+
+--将值value 关联到key ，并将key 的生存时间设为seconds (以秒为单位)
+SETEX key seconds value
+
+--以毫秒为单位设置key 的生存时间
+PSETEX key milliseconds value
+
+--将key 的值设为value ，当且仅当key 不存在
+SETNX key value
+
+--返回key 所储存的字符串值的长度
+STRLEN key
+
+----------------------------------------------------------------------------
+2.hash
+
+--返回哈希表key 中给定域field 的值
+HGET key field
+
+--返回哈希表key 中，所有的域和值
+HGETALL key
+
+--查看哈希表key 中，给定域field 是否存在
+HEXISTS key field
+
+--删除哈希表key 中的一个或多个指定域，不存在的域将被忽略
+HDEL key field [field ...]
+
+--为哈希表key 中的域field 的值加上增量increment
+HINCRBY key field increment
+
+--返回哈希表key 中的所有域
+HKEYS key
+
+--返回哈希表key 中域的数量
+HLEN key
+
+--返回哈希表key 中，一个或多个给定域的值
+HMGET key field [field ...]
+
+--将哈希表key 中的域field 的值设为value
+HSET key field value
+
+--同时将多个field-value (域-值) 对设置到哈希表key 中
+HMSET key field value [field value ...]
+
+--将哈希表key 中的域field 的值设置为value ，当且仅当域field 不存在
+HSETNX key field value
+
+--返回哈希表key 中所有域的值
+HVALS key
+
+----------------------------------------------------------------------------
+3.list
+
+--返回列表key 中，下标为index 的元素
+LINDEX key index
+
+--返回列表key 的长度
+LLEN key
+
+--移除并返回列表key 的头元素
+LPOP key
+
+--移除并返回列表key 的尾元素
+RPOP key
+
+--将列表key 下标为index 的元素的值设置为value
+LSET key index value
+
+--将一个或多个值value 插入到列表key 的表头
+LPUSH key value [value ...]
+
+--将值value 插入到列表key 的表头，当且仅当key 存在并且是一个列表
+LPUSHX key value
+
+--将一个或多个值value 插入到列表key 的表尾(最右边)
+RPUSH key value [value ...]
+
+--将值value 插入到列表key 的表尾，当且仅当key 存在并且是一个列表
+RPUSHX key value
+
+--返回列表key 中指定区间内的元素，区间以偏移量start 和stop 指定
+LRANGE key start stop
+
+--根据参数count 的值，移除列表中与参数value 相等的元素
+LREM key count value
+count 的值可以是以下几种：
+• count > 0 : 从表头开始向表尾搜索，移除与value 相等的元素，数量为count 。
+• count < 0 : 从表尾开始向表头搜索，移除与value 相等的元素，数量为count 的绝对值。
+• count = 0 : 移除表中所有与value 相等的值
+
+--对一个列表进行修剪，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除
+LTRIM key start stop
+
+--将值value 插入到列表key 当中，位于值pivot 之前或之后（当pivot 不存在于列表key 时，不执行任何操作）
+LINSERT key BEFORE|AFTER pivot value
+例: LINSERT mylist BEFORE "World" "There"
+
+--列表的阻塞式(blocking) 弹出
+BLPOP key [key ...] timeout
+
+--是列表的阻塞式(blocking) 弹出
+BRPOP key [key ...] timeout
+
+----------------------------------------------------------------------------
+4.set
+
+--将一个或多个member 元素加入到集合key 当中，已经存在于集合的member 元素将被忽略
+SADD key member [member ...]
+
+--返回集合key 中元素的数量
+SCARD key
+
+--返回一个集合的全部成员，该集合是所有给定集合之间的差集
+SDIFF key [key ...]
+
+--返回一个集合的全部成员，该集合是所有给定集合的交集
+SINTER key [key ...]
+
+--判断member 元素是否集合key 的成员
+SISMEMBER key member
+
+--返回集合key 中的所有成员
+SMEMBERS key
+
+--将member 元素从source 集合移动到destination 集合
+SMOVE source destination member
+
+--移除并返回集合中的一个随机元素
+SPOP key
+
+--移除集合key 中的一个或多个member 元素，不存在的member 元素会被忽略
+SREM key member [member ...]
+
+--返回一个集合的全部成员，该集合是所有给定集合的并集
+SUNION key [key ...]
+
+----------------------------------------------------------------------------
+5.zset(sorted set、有序集合)
+
+--将一个或多个member 元素及其score 值加入到有序集key 当中
+ZADD key score member [[score member] [score member] ...]
+
+--返回有序集key 的基数（集合中元素的数量）
+ZCARD key
+
+--返回有序集key 中，score 值在min 和max 之间的成员的数量
+ZCOUNT key min max
+
+--为有序集key 的成员member 的score 值加上增量increment
+ZINCRBY key increment member
+
+--返回有序集key 中，指定区间内的成员
+ZRANGE key start stop [WITHSCORES]
+
+--返回有序集key 中成员member 的排名
+ZRANK key member
+
+--移除有序集key 中的一个或多个成员，不存在的成员将被忽略
+ZREM key member [member ...]
+
+--返回有序集key 中，成员member 的score 值
+ZSCORE key member

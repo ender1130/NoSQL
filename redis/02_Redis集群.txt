@@ -1,0 +1,93 @@
+
+Redis集群
+
+Redis集群是一个可以在多个 Redis 节点之间进行数据共享的设施(installation)。
+
+Redis集群不支持那些需要同时处理多个键的 Redis 命令，因为执行这些命令需要在多个 Redis 节点
+之间移动数据，并且在高负载的情况下，这些命令将降低 Redis 集群的性能，并导致不可预测的行为。
+
+Redis集群通过分区(partition)来提供一定程度的可用性(availability):即使集群中有一部分节点失
+效或者无法进行通讯，集群也可以继续处理命令请求。
+
+Redis 集群提供了以下两个好处:
+1.将数据自动切分（split）到多个节点的能力。
+2.当集群中的一部分节点失效或者无法进行通讯时， 仍然可以继续处理命令请求的能力。
+
+客户端与redis节点直连,不需要中间proxy层。
+客户端不需要连接集群所有节点，连接集群中任何一个可用节点即可。
+
+---------------------------------------------------------------------------------------
+创建Redis集群
+
+1.创建集群及节点目录
+mkdir redis-cluster
+cd redis-cluster
+mkdir 37001 37002 37003 37004 37005 37006
+
+2.在每个节点中创建redis.conf，内容如下(注意端口号)
+daemonize yes
+port 37001
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+
+(注: cluster-enabled 用于开启集群模式，cluster-conf-file 选项则设定了保存节点配置文件的路径，
+     默认值为 nodes.conf。节点配置文件无须人为修改，它由 Redis 集群在启动时创建，并在有需要时
+     自动进行更新。)
+
+复制redis.conf
+cd 37001
+cp ./redis.conf ../37002
+
+完成后的目录如下:
+redis-cluster
+ + 37001
+ + 37002
+ + 37003
+ + 37004
+ + 37005
+ + 37006
+ + redis-3.0.5
+ + redis-3.0.5.tar.gz
+
+3.编译出可执行文件 redis-server，并将文件复制到 redis-cluster 目录下，并依次开启每个节点:
+cp ./redis-server redis-cluster/
+cd 37001
+../redis-server ./redis.conf
+....
+
+4.安装redis-trib.rb程序需要的支持:
+apt-get install yum
+yum -y install ruby rubygems
+gem install redis
+
+5.创建集群
+(使用 Redis 集群命令行工具 redis-trib 来创建集群，redis-trib 位于 Redis 源码的 src 文件夹中)
+./redis-trib.rb create --replicas 1 112.124.26.177:37001 112.124.26.177:37002 112.124.26.177:37003 112.124.26.177:37004 112.124.26.177:37005 112.124.26.177:37006
+
+-- 给定 redis-trib.rb 程序的命令是 create ，这表示我们希望创建一个新的集群。
+-- 选项 --replicas 1 表示我们希望为集群中的每个主节点创建一个从节点。
+
+(切记，创建集群时一定要用服务器的IP地址，用127.0.0.1不行！！！)
+
+6.连接集群
+redis-cli -c -p 37001
+
+7.添加新节点
+./redis-trib.rb add-node 127.0.0.1:7007 127.0.0.1:7001
+
+8.移除一个节点
+./redis-trib del-node 127.0.0.1:7000 'node-id'
+
+---------------------------------------------------------------------------------------
+使用Redis集群
+
+--使用客户端连接redis集群
+redis-cli -c -h 192.168.1.105 -p 7000
+
+--查看集群信息
+cluster info
+
+--查看集群节点
+cluster nodes
