@@ -1,0 +1,59 @@
+
+安装、运行
+
+第一种方式:
+1.将 mongodb-win32-i386-2.0.4.zip 解压到 C:\mongodb下，
+新建data文件夹，并且在data文件夹下新建db文件夹。
+
+2.
+运行服务端:
+打开cmd，进入mongodb\bin目录下
+运行 C:\mongodb\bin>mongod --dbpath=c:\mongodb\data\db --directoryperdb
+		    --logpath=c:\mongodb\data\mongodb.log -logappend
+
+注:
+数据目录为 C:\mongodb\data\db，并且每个数据库将储存在一个单独的目录(--directoryperdb)。
+日志文件为 C:\mongodb\data\mongodb.log，以追加的添加方式记录(-logappend)，
+mongodb.log是运行命令后自动生成的日志文件。
+
+服务端要一直运行。
+
+3.
+运行客户端:
+新打开一个cmd
+运行 C:\mongodb\bin>mongo
+或 C:\mongodb\bin>mongo localhost:27017
+或 C:\mongodb\bin>mongo --host localhost --port 27017
+
+
+第二种方式:(将MongoDB安装成服务)
+--查看mongod命令的参数
+C:\mongodb\bin>mongod -h
+
+--安装服务
+C:\mongodb\bin>mongod --dbpath c:\mongodb\data\db --directoryperdb
+               --logpath c:\mongodb\data\mongdb.log --logappend
+	       [--serviceName MongoDB]
+	       [--bind_ip 127.0.0.1]
+               [--port 27017]
+	       --install
+注:默认端口号为27017
+
+--删除服务
+C:\mongodb\bin>mongod --remove
+
+--启动服务
+C:\mongodb\bin>net start mongodb
+
+--停止服务
+C:\mongodb\bin>net stop mongodb
+
+--查看mongo命令参数
+C:\mongodb\bin>mongo -h
+
+--运行mongodb
+C:\mongodb\bin>mongo [--host localhost] [--port 1234]
+或
+C:\mongodb\bin>mongo --host localhost --port 27017
+或
+C:\mongodb\bin>mongo localhost:27017
